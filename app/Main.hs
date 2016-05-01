@@ -32,8 +32,7 @@ instance FromRecord Entry where
 
 instance FromField UTCTime where
   parseField t = pure $ parseTimeOrError True defaultTimeLocale "%-m/%-d/%Y" (C8.unpack t)
---  parseField t
---    | t= Other
+
 scheduleFromByteString :: BL.ByteString -> Either String Schedule
 scheduleFromByteString bs =
   let es = decode HasHeader bs :: Either String (V.Vector Entry) in
@@ -70,6 +69,19 @@ rotationCounts sched = countMap
     sList = V.toList (entries sched)
     tps = map (\e -> (rotation e, person e)) sList
 
+dailySchedule :: Schedule -> M.Map UTCTime [(Text, Text)]
+dailySchedule sched = sMap
+  where
+    sMap = foldl updateMap M.empty (V.toList (entries sched))
+    updateMap mp (Entry d r p) = M.insertWith (++) d [(r,p)] mp
+
+printDailySchedule ::  Schedule -> IO ()
+printDailySchedule sched = mapM_ printDay ds
+  where
+    printDay t = do
+      print $ fst t
+      mapM_ (\e -> putStrLn ("\t" ++ T.unpack (fst e) ++ "   " ++ T.unpack (snd e))) (sort $ snd t)
+    ds = M.toList (dailySchedule sched)
 
 scheduleFile = "/Users/toddroth/Downloads/schedule.txt"
 
@@ -80,7 +92,7 @@ main = do
   case sched of
     Left e -> putStrLn e
     Right s -> do
-
+{--
       mapM_ print (rotations s)
       putStrLn "\n\n"
       mapM_ print (dates s)
@@ -89,6 +101,10 @@ main = do
       mapM_ print (entries s)
       let cnts = M.toList (rotationCounts s)
       mapM_ print cnts
+      --print $ dailySchedule s--}
+--      printDailySchedule s
+      --let sched = dailySchedule s
+      print "done"
 
 {-}
   [RuleSet] -> Schedule -> Analyzer
