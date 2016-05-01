@@ -1,0 +1,55 @@
+{-# LANGUAGE OverloadedStrings #-}
+
+module Main where
+
+import Lib
+import Data.Csv
+import Data.Text
+import qualified Data.Text as T
+import qualified Data.Vector as V
+import Control.Monad ( mzero )
+import qualified Data.ByteString.Lazy as BL
+
+
+data Entry = Entry {
+  date :: !Text,
+  rotation :: !Text,
+  person :: !Text }
+
+instance Show Entry where
+  show e = T.unpack $ date e ++
+           "   " ++
+           T.unpack $ rotation e ++
+           "   " ++
+           T.unpack $ person e ++
+           "\n"
+
+data SomeStruct {
+val :: String,
+
+data Schedule = Schedule {
+  entries :: V.Vector Entry } deriving (Show)
+
+{-
+instance Show Schedule where
+  show s = V.foldl (\acc e -> acc ++ (show e)) "" (entries s)
+          -}      
+
+instance FromRecord Entry where
+  parseRecord v
+    | V.length v == 11 = Entry <$> v .! 0 <*> v .! 2 <*> v .! 9
+    | otherwise = mzero
+
+
+scheduleFromByteString :: BL.ByteString -> Either String Schedule
+scheduleFromByteString bs =
+  let es = decode HasHeader bs :: Either String (V.Vector Entry) in
+  Schedule <$> es
+
+main :: IO ()
+main = do
+  let fp = "/Users/toddroth/Downloads/schedule.txt"
+  csvData <- BL.readFile fp
+  
+  print (scheduleFromByteString csvData)
+  putStrLn "hello"
