@@ -12,10 +12,12 @@ import qualified Data.Text            as T
 import qualified Data.Vector          as V
 import           Lib
 import           Safe
-
+import Data.Time.Format
+import Data.Time
+import qualified Data.ByteString.Char8 as C8
 
 data Entry = Entry {
-  date     :: !Text,
+  date     :: !UTCTime,
   rotation :: !Text,
   person   :: !Text } deriving (Show, Eq)
 
@@ -27,6 +29,11 @@ instance FromRecord Entry where
     | V.length v == 11 = Entry <$> v .! 0 <*> v .! 2 <*> v .! 9
     | otherwise = mzero
 
+
+instance FromField UTCTime where
+  parseField t = pure $ parseTimeOrError True defaultTimeLocale "%-m/%-d/%Y" (C8.unpack t)
+--  parseField t
+--    | t= Other
 scheduleFromByteString :: BL.ByteString -> Either String Schedule
 scheduleFromByteString bs =
   let es = decode HasHeader bs :: Either String (V.Vector Entry) in
@@ -42,15 +49,15 @@ people sched =
   let sls = V.toList (entries sched) in
   sort . nub $ map person sls
 
-dates :: Schedule -> [Text]
+dates :: Schedule -> [UTCTime]
 dates sched =
   let sls = V.toList (entries sched) in
   nub $ map date sls
 
-startDate :: Schedule -> Maybe Text
+startDate :: Schedule -> Maybe UTCTime
 startDate sched = headMay (dates sched)
 
-endDate :: Schedule -> Maybe Text
+endDate :: Schedule -> Maybe UTCTime
 endDate sched = lastMay (dates sched)
 
 rotationCounts :: Schedule -> M.Map (Text,Text) Integer
@@ -83,7 +90,7 @@ main = do
       let cnts = M.toList (rotationCounts s)
       mapM_ print cnts
 
-
+{-}
   [RuleSet] -> Schedule -> Analyzer
   for every day in Schedule apply ruleset to day
 
@@ -97,3 +104,4 @@ data DateType = AnyDay | DaysOfWeek [Integer] | OnDate Date | Step Integer
   date :: DateType
   --assertion :: Bool
 }
+-}
