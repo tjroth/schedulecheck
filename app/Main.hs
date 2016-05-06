@@ -4,8 +4,8 @@
 module Main where
 
 import qualified Data.ByteString.Lazy as BL
+import           Options.Generic
 import           Schedule
-import Options.Generic
 
 data CliApp = CliApp { file :: String }
   deriving (Generic, Show)
@@ -20,7 +20,7 @@ main = do
   case sched of
     Left e -> putStrLn e
     Right s -> do
-      mapM_ print (rotations s)
+      {--mapM_ print (rotations s)
       putStrLn "\n\n"
       mapM_ print (dates s)
       print (startDate s)
