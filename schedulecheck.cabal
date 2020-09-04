@@ -24,6 +24,7 @@ library
                      , safe
                      , containers
                      , time
+		     , unordered-containers
   default-language:    Haskell2010
 
 executable schedulecheck-exe
@@ -34,6 +35,7 @@ executable schedulecheck-exe
                      , schedulecheck
                      , bytestring
                      , optparse-generic
+                     , optparse-simple
 
   default-language:    Haskell2010
 
