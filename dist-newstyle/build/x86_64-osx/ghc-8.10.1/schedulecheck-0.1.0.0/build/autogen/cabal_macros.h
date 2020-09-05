@@ -55,6 +55,17 @@
   (major1) == 0 && (major2) == 6 && (minor) <= 2)
 #endif /* MIN_VERSION_containers */
 
+/* package optparse-generic-1.4.3 */
+#ifndef VERSION_optparse_generic
+#define VERSION_optparse_generic "1.4.3"
+#endif /* VERSION_optparse_generic */
+#ifndef MIN_VERSION_optparse_generic
+#define MIN_VERSION_optparse_generic(major1,major2,minor) (\
+  (major1) <  1 || \
+  (major1) == 1 && (major2) <  4 || \
+  (major1) == 1 && (major2) == 4 && (minor) <= 3)
+#endif /* MIN_VERSION_optparse_generic */
+
 /* package safe-0.3.19 */
 #ifndef VERSION_safe
 #define VERSION_safe "0.3.19"

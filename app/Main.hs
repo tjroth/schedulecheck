@@ -25,12 +25,12 @@ main = do
   putStrLn "crap"-}
   putStrLn "Hello haskell"
   --x <-getRecord "Schedule Analyzer"
-  csvData <- BL.readFile "/Users/toddroth/Downloads/csvschedule2.txt"
-  let sched = scheduleFromByteString csvData
-  case sched of
-    Left e -> putStrLn e
-    Right s -> do
-      mapM_ print (entries s)
+  --csvData <- BL.readFile "/Users/toddroth/Downloads/csvschedule2.txt"
+  --let sched = scheduleFromByteString csvData
+  --case sched of
+  --  Left e -> putStrLn e
+  --  Right s -> do
+  --    mapM_ print (entries s)
    {--
 main :: IO ()
 main = do
